@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir -p coverage
           chmod -R a+rw ./coverage
-          npm run test:docker
+          npm run docker:test
 
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v4
