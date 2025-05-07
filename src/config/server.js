@@ -29,13 +29,13 @@ export const serverConfig = {
   port: {
     doc: 'The port to bind.',
     format: 'port',
-    default: 3003,
+    default: 3001,
     env: 'PORT'
   },
   serviceName: {
     doc: 'Api Service Name',
     format: String,
-    default: 'fcp-sfd-messaging-gateway'
+    default: 'fcp-sfd-comms'
   },
   root: {
     doc: 'Project root',
@@ -93,7 +93,7 @@ export const serverConfig = {
   mongoDatabase: {
     doc: 'database for mongodb',
     format: String,
-    default: 'fcp-sfd-messaging-gateway',
+    default: 'fcp-sfd-comms',
     env: 'MONGO_DATABASE'
   },
   httpProxy: {
