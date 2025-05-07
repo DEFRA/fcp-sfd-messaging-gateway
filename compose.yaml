@@ -6,6 +6,7 @@ services:
     container_name: fcp-sfd-messaging-gateway-development
     ports:
       - '3003:3003'
+      - '9229:9229'
     links:
       - 'localstack:localstack'
       - 'mongodb:mongodb'

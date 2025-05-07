@@ -1,5 +1,5 @@
 services:
-  fcp-sfd-comms:
+  fcp-sfd-messaging-gateway:
     command: npm run start:debug
 
 networks:
