@@ -1,0 +1,7 @@
+services:
+  fcp-sfd-messaging-gateway:
+    command: npm run start:debug
+
+networks:
+  cdp-tenant:
+    driver: bridge

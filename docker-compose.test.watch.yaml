@@ -1,0 +1,3 @@
+services:
+  fcp-sfd-messaging-gateway:
+    command: npm run test:watch
