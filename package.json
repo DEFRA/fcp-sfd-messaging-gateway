@@ -1,6 +1,6 @@
 {
   "name": "fcp-sfd-messaging-gateway",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "fcp-sfd-messaging-gateway",
   "main": "src/index.js",
   "type": "module",
