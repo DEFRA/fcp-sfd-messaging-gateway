@@ -35,7 +35,7 @@ export const serverConfig = {
   serviceName: {
     doc: 'Api Service Name',
     format: String,
-    default: 'fcp-sfd-comms'
+    default: 'fcp-sfd-messaging-gateway'
   },
   root: {
     doc: 'Project root',
@@ -93,7 +93,7 @@ export const serverConfig = {
   mongoDatabase: {
     doc: 'database for mongodb',
     format: String,
-    default: 'fcp-sfd-comms',
+    default: 'fcp-sfd-messaging-gateway',
     env: 'MONGO_DATABASE'
   },
   httpProxy: {
