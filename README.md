@@ -1,6 +1,6 @@
 # fcp-sfd-messaging-gateway
 ![Publish](https://github.com/defra/fcp-sfd-messaging-gateway/actions/workflows/publish.yml/badge.svg)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_fcp-sfd-messaging-gateway&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DEFRA_fcp-sfd-messaging-gateway) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_fcp-sfd-messaging-gateway&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=DEFRA_fcp-sfd-messaging-gateway)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_fcp-sfd-messaging-gateway&metric=coverage)](https://sonarcloud.io/summary/new_code?id=DEFRA_fcp-sfd-messaging-gateway)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=DEFRA_fcp-sfd-messaging-gateway&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=DEFRA_fcp-sfd-messaging-gateway)
 
