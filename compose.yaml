@@ -6,7 +6,7 @@ services:
     container_name: fcp-sfd-messaging-gateway-development
     ports:
       - '3003:3003'
-      - '9229:9229'
+      - '9232:9232'
     links:
       - 'localstack:localstack'
       - 'mongodb:mongodb'
@@ -22,6 +22,7 @@ services:
       - .env
     environment:
       PORT: 3003
+      PORT_DEBUG: 9232
       NODE_ENV: development
       LOCALSTACK_ENDPOINT: http://localstack:4566
       MONGO_URI: mongodb://mongodb:27017/
