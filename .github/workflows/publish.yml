@@ -31,7 +31,7 @@ jobs:
         run: |
           mkdir -p coverage
           chmod -R a+rw ./coverage
-          npm run docker:test
+          docker compose -f compose.yaml -f compose.test.yaml run --build --rm 'fcp-sfd-messaging-gateway'
 
       - name: SonarQubeScan
         uses: SonarSource/sonarqube-scan-action@v4
