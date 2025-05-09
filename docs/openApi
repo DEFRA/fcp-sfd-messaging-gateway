@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: FCP SFD Messaging Gateway
+  description: |
+    FCP SFD Messaging Gateway Service
+    
+    This service provides an API endpoint to process HTTPS requests and forward them to the SFD services for processing.
+  version: 1.0.0
+
+paths:
+  /fcp-sfd-messaging-gateway/comms-request:
+    post:
+      summary: Submit a communication request
+      description: |
+        Receives a communication request and forwards it to the FCP SFD Comms SNS topic for processing.
+      operationId: submitcommsRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/commsRequest'
+      responses:
+        '202':
+          description: Communication request accepted for processing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Communication request accepted"
+        '400':
+          description: Bad request due to invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    commsRequest:
+      type: object
+      required:
+        - sbi
+        - sourceSystem
+        - notifyTemplateId
+        - recipient
+        - personalisation
+        - reference
+        - emailReplyToId
+      properties:
+        crn:
+          type: integer
+          minimum: 1050000000
+          maximum: 9999999999
+          description: Customer Reference Number (consists of 10 digits)
+          example: 1050000000
+        sbi:
+          type: integer
+          minimum: 105000000
+          maximum: 999999999
+          description: Single Business Identifier (consists of 9 digits)
+          example: 105000000
+        sourceSystem:
+          type: string
+          pattern: "^[a-z0-9-_]+$"
+          description: Name of the source system that originated the message
+          example: "ahwp"
+        notifyTemplateId:
+          type: string
+          format: uuid
+          description: Notify template identifier
+          example: "27ccdee6-d823-4adf-8958-68549f913747"
+        commsType:
+          type: string
+          description: Type of communication (e.g. email, SMS)
+          default: "email"
+          enum:
+            - "email"
+          example: "email"
+        recipient:
+          type: string
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+          minLength: 1
+          maxLength: 320
+          description: Contact email address
+          example: "jane.doe@defra.gov.uk"
+        personalisation:
+          type: object
+          description: JSON-formatted variables required for the Notify template
+          example:
+            applicationReference: "test-reference"
+        reference:
+          type: string
+          description: Unique identifier for further operations like status query, must be prefixed with the source system
+          example: "ffc-ahwr-example-reference"
+        oneClickUnsubscribeUrl:
+          type: string
+          description: URL for one-click unsubscribe option
+          example: "https://unsubscribe.example.com"
+        emailReplyToId:
+          type: string
+          format: uuid
+          description: Identifier for the reply-to email address
+          example: "da1afd3e-3368-4c3e-b239-76676471c2d4"
+      additionalProperties: true
+
+    Error:
+      type: object
+      required:
+        - statusCode
+        - message
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Error message
+          example: "Invalid request body"
+        details:
+          type: object
+          description: Additional error details
+          example:
+            field: "data.recipient"
+            reason: "Invalid email format"
