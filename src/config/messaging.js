@@ -31,17 +31,11 @@ export const messagingConfig = {
       env: 'SQS_CONSUMER_HEARTBEAT_INTERVAL'
     },
     commsRequest: {
-      queueUrl: {
-        doc: 'URL for the comms ingest queue',
+      topicArn: {
+        doc: 'ARN (Amazon Resource Name) for the comms gateway SNS topic to which comms requests are published',
         format: String,
         default: null,
-        env: 'COMMS_REQUEST_QUEUE_URL'
-      },
-      deadLetterUrl: {
-        doc: 'URL for the comms ingest dead letter queue',
-        format: String,
-        default: null,
-        env: 'COMMS_REQUEST_DEAD_LETTER_QUEUE_URL'
+        env: 'COMMS_GATEWAY_TOPIC_ARN'
       }
     },
     commEvents: {
