@@ -12,7 +12,7 @@ paths:
     post:
       summary: Submit a communication request
       description: |
-        Receives a communication request and forwards it to the FCP SFD Comms SNS topic for processing.
+        Receives a communication HTTPS request.
       operationId: submitcommsRequest
       requestBody:
         required: true
