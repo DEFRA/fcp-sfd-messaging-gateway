@@ -3,7 +3,7 @@ import commsSchema from '../../../schemas/commsRequest/v1.js'
 
 const commsRequest = {
   method: 'POST',
-  path: '/comms-request',
+  path: '/v1/comms-request',
   options: {
     validate: {
       payload: commsSchema,

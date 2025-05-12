@@ -1,4 +1,4 @@
-import { commsRequest } from './comms-request/commsRequest.js'
+import { commsRequest } from './comms-request/comms-request.js'
 
 const v1Routes = [
   commsRequest

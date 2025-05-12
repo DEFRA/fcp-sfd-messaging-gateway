@@ -1,11 +1,5 @@
 export const awsConfig = {
   aws: {
-    sqsEndpoint: {
-      doc: 'AWS SQS (Simple Queue Service) Endpoint',
-      format: String,
-      default: 'https://sqs.eu-west-2.amazonaws.com',
-      env: 'SQS_ENDPOINT'
-    },
     snsEndpoint: {
       doc: 'AWS SNS (Simple Notification Service) Endpoint',
       format: String,

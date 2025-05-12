@@ -4,11 +4,11 @@ info:
   description: |
     FCP SFD Messaging Gateway Service
     
-    This service provides an API endpoint to process HTTPS requests and forward them to the SFD services for processing.
+    This service provides an API endpoints to process HTTPS requests for Single Front Door
   version: 1.0.0
 
 paths:
-  /fcp-sfd-messaging-gateway/comms-request:
+  /v1/comms-request:
     post:
       summary: Submit a communication request
       description: |
@@ -81,12 +81,26 @@ components:
             - "email"
           example: "email"
         recipient:
-          type: string
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
-          minLength: 1
-          maxLength: 320
-          description: Contact email address
-          example: "jane.doe@defra.gov.uk"
+          oneOf:
+            - type: string
+              pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+              minLength: 1
+              maxLength: 320
+              description: Single email address
+              example: "jane.doe@defra.gov.uk"
+            - type: array
+              items:
+                type: string
+                pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+                minLength: 1
+                maxLength: 320
+              minItems: 1
+              maxItems: 100
+              description: Multiple email addresses
+              example: 
+                - "jane.doe@defra.gov.uk"
+                - "john.smith@defra.gov.uk"
+          description: Contact email address(es) - single string or array of strings
         personalisation:
           type: object
           description: JSON-formatted variables required for the Notify template
