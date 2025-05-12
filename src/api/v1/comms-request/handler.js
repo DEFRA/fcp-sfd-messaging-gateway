@@ -11,20 +11,20 @@ const commsRequestHandler = {
   handler: async (request, h) => {
     try {
       const payload = request.payload
-      
+
       const cloudEventMessage = cloudEventsWrapper(payload)
-      
+
       await publish(snsClient, commsSnsTopic, cloudEventMessage)
-      
-      return h.response({ 
+
+      return h.response({
         message: 'Communication request accepted'
       }).code(202)
     } catch (error) {
       logger.error(`Error in comms request handler: ${error.message}`)
-      
+
       return h.response({
         statusCode: 500,
-        message: errorMessage
+        message: error.message
       }).code(500)
     }
   }
