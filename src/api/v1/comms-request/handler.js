@@ -10,7 +10,7 @@ const commsRequestHandler = {
       const recipients = Array.isArray(payload.recipient) ? payload.recipient : [payload.recipient]
       
       for (const recipient of recipients) {
-        publishCommsRequest(payload)
+        publishCommsRequest(payload,recipient)
       }
 
       return h.response({
