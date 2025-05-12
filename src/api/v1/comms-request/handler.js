@@ -11,7 +11,6 @@ const commsRequestHandler = {
       
       for (const recipient of recipients) {
         publishCommsRequest(payload)
-        logger.info(`Published message: ${recipient}`)
       }
 
       return h.response({
