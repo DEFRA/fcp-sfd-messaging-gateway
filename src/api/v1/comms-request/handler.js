@@ -9,9 +9,9 @@ const commsRequestHandler = {
     try {
       const payload = request.payload
       const recipients = normalizeIntoArray(payload.recipient)
-      
+
       for (const recipient of recipients) {
-        await publishCommsRequest(payload,recipient)
+        await publishCommsRequest(payload, recipient)
       }
 
       return h.response({

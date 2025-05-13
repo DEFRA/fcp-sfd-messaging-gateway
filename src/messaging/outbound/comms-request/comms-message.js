@@ -1,4 +1,3 @@
-
 export const buildCommsMessage = (payload, recipient) => ({
   id: crypto.randomUUID(),
   source: 'fcp-sfd-messaging-gateway',
@@ -12,7 +11,7 @@ export const buildCommsMessage = (payload, recipient) => ({
     sourceSystem: payload.sourceSystem,
     notifyTemplateId: payload.notifyTemplateId,
     commsType: payload.commsType,
-    recipient: recipient,
+    recipient,
     personalisation: payload.personalisation,
     reference: payload.reference,
     oneClickUnsubscribeUrl: payload.oneClickUnsubscribeUrl,
