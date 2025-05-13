@@ -112,31 +112,41 @@ describe('commsRequestHandler', () => {
       expect(result).toBe(mockResponse)
     })
 
-    test('should log error when publishCommsRequest fails', async () => {
+    test('should log error and return 500 when publishCommsRequest fails', async () => {
       const error = new Error('Failed to publish')
       mockNormalizeIntoArray.mockReturnValue(['test@example.com'])
       mockPublishCommsRequest.mockRejectedValue(error)
 
-      await commsRequestHandler.handler(mockRequest, mockH)
+      const result = await commsRequestHandler.handler(mockRequest, mockH)
 
       expect(mockLoggerError).toHaveBeenCalledWith('Error processing message: Failed to publish')
-      expect(mockH.response).not.toHaveBeenCalled()
+      expect(mockH.response).toHaveBeenCalledWith({
+        statusCode: 500,
+        message: 'Failed to process request'
+      })
+      expect(mockCode).toHaveBeenCalledWith(500)
+      expect(result).toBe(mockResponse)
     })
 
-    test('should log error when normalizeIntoArray throws', async () => {
+    test('should log error and return 500 when normalizeIntoArray throws', async () => {
       const error = new Error('Normalize failed')
       mockNormalizeIntoArray.mockImplementation(() => {
         throw error
       })
 
-      await commsRequestHandler.handler(mockRequest, mockH)
+      const result = await commsRequestHandler.handler(mockRequest, mockH)
 
       expect(mockLoggerError).toHaveBeenCalledWith('Error processing message: Normalize failed')
       expect(mockPublishCommsRequest).not.toHaveBeenCalled()
-      expect(mockH.response).not.toHaveBeenCalled()
+      expect(mockH.response).toHaveBeenCalledWith({
+        statusCode: 500,
+        message: 'Failed to process request'
+      })
+      expect(mockCode).toHaveBeenCalledWith(500)
+      expect(result).toBe(mockResponse)
     })
 
-    test('should stop processing remaining recipients if one fails', async () => {
+    test('should stop processing remaining recipients if one fails and return 500', async () => {
       const recipients = ['test1@example.com', 'test2@example.com', 'test3@example.com']
       mockRequest.payload.recipient = recipients
       mockNormalizeIntoArray.mockReturnValue(recipients)
@@ -146,11 +156,16 @@ describe('commsRequestHandler', () => {
         .mockRejectedValueOnce(new Error('Publish failed'))
         .mockResolvedValueOnce(undefined)
 
-      await commsRequestHandler.handler(mockRequest, mockH)
+      const result = await commsRequestHandler.handler(mockRequest, mockH)
 
       expect(mockPublishCommsRequest).toHaveBeenCalledTimes(2)
       expect(mockLoggerError).toHaveBeenCalledWith('Error processing message: Publish failed')
-      expect(mockH.response).not.toHaveBeenCalled()
+      expect(mockH.response).toHaveBeenCalledWith({
+        statusCode: 500,
+        message: 'Failed to process request'
+      })
+      expect(mockCode).toHaveBeenCalledWith(500)
+      expect(result).toBe(mockResponse)
     })
 
     test('should preserve payload immutability', async () => {
@@ -182,15 +197,20 @@ describe('commsRequestHandler', () => {
       expect(result).toBe(mockResponse)
     })
 
-    test('should handle error with undefined message property', async () => {
+    test('should handle error with undefined message property and return 500', async () => {
       const error = { toString: () => 'Custom error' }
       mockNormalizeIntoArray.mockReturnValue(['test@example.com'])
       mockPublishCommsRequest.mockRejectedValue(error)
 
-      await commsRequestHandler.handler(mockRequest, mockH)
+      const result = await commsRequestHandler.handler(mockRequest, mockH)
 
       expect(mockLoggerError).toHaveBeenCalledWith('Error processing message: undefined')
-      expect(mockH.response).not.toHaveBeenCalled()
+      expect(mockH.response).toHaveBeenCalledWith({
+        statusCode: 500,
+        message: 'Failed to process request'
+      })
+      expect(mockCode).toHaveBeenCalledWith(500)
+      expect(result).toBe(mockResponse)
     })
   })
 

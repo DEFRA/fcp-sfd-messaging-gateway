@@ -1,5 +1,6 @@
 import { commsRequestHandler } from './handler.js'
 import commsSchema from '../../../schemas/comms-request/v1.js'
+import { StatusCodes } from 'http-status-codes'
 
 const commsRequest = {
   method: 'POST',
@@ -7,12 +8,12 @@ const commsRequest = {
   options: {
     validate: {
       payload: commsSchema,
-      failAction: (request, h, err) => {
+      failAction: (_, h, err) => {
         return h.response({
-          statusCode: 400,
+          statusCode: StatusCodes.BAD_REQUEST,
           message: 'Invalid request payload',
           details: err.message
-        }).code(400).takeover()
+        }).code(StatusCodes.BAD_REQUEST).takeover()
       }
     },
     handler: commsRequestHandler.handler
