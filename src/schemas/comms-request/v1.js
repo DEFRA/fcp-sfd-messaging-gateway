@@ -23,6 +23,11 @@ const v1 = Joi.object({
   reference: Joi.string().required(),
   oneClickUnsubscribeUrl: Joi.string().uri().optional(),
   emailReplyToId: Joi.string().uuid().required()
-}).required()
+})
+  .label('body')
+  .messages({
+    'object.base': '"body" must be of type object'
+  })
+  .required()
 
 export default v1

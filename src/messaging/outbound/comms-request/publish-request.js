@@ -8,9 +8,9 @@ const logger = createLogger()
 const commsSnsTopic = config.get('messaging.commsRequest.topicArn')
 
 const publishCommsRequest = async (payload, recipient) => {
-  const sanitizedCommsMessage = await buildCommsMessage(payload, recipient)
-  await publish(snsClient, commsSnsTopic, sanitizedCommsMessage)
-  logger.info(`Successfully published comms request with ID: ${sanitizedCommsMessage.id}`)
+  const commsMessage = buildCommsMessage(payload, recipient)
+  await publish(snsClient, commsSnsTopic, commsMessage)
+  logger.info(`Successfully published comms request with ID: ${commsMessage.id}`)
 }
 
 export {

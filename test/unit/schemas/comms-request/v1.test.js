@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 
-import schema from '../../../../src/schemas/commsRequest/v1'
+import schema from '../../../../src/schemas/comms-request/v1.js'
 import mockV1CommsRequest from '../../mocks/comms-request/v1.js'
 
 describe('comms request v1 schema validation', () => {

@@ -1,5 +1,5 @@
 import { commsRequestHandler } from './handler.js'
-import commsSchema from '../../../schemas/commsRequest/v1.js'
+import commsSchema from '../../../schemas/comms-request/v1.js'
 
 const commsRequest = {
   method: 'POST',
