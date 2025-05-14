@@ -7,25 +7,14 @@ const logger = createLogger()
 
 const commsRequestHandler = {
   handler: async (request, h) => {
-    try {
-      const payload = request.payload
-      const recipients = normalizeIntoArray(payload.recipient)
-
-      for (const recipient of recipients) {
-        await publishCommsRequest(payload, recipient)
-      }
-
-      return h.response({
-        message: 'Communication request accepted'
-      }).code(StatusCodes.ACCEPTED)
-    } catch (error) {
-      logger.error(`Error processing message: ${error.message}`)
-
-      return h.response({
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: 'Failed to process request'
-      }).code(StatusCodes.INTERNAL_SERVER_ERROR)
-    }
+    const payload = request.payload
+    const recipients = normalizeIntoArray(payload.recipient)
+    
+    await publishCommsRequest(payload, recipients)
+    
+    return h.response({
+      message: 'Communication requests accepted'
+    }).code(StatusCodes.ACCEPTED)
   }
 }
 

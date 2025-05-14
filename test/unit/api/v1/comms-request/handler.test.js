@@ -1,10 +1,10 @@
 import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest'
 import mockCommsRequest from '../../../mocks/comms-request/v1'
 import { commsRequestHandler } from '../../../../../src/api/v1/comms-request/handler'
+import { normalizeIntoArray } from '../../../../../src/utils/normalize-into-array.js'
 
 const mockLoggerError = vi.fn()
 const mockPublishCommsRequest = vi.fn()
-const mockNormalizeIntoArray = vi.fn()
 
 vi.mock('../../../../../src/logging/logger', () => ({
   createLogger: () => ({
@@ -14,10 +14,6 @@ vi.mock('../../../../../src/logging/logger', () => ({
 
 vi.mock('../../../../../src/messaging/outbound/comms-request/publish-request', () => ({
   publishCommsRequest: (...args) => mockPublishCommsRequest(...args)
-}))
-
-vi.mock('../../../../../src/utils/normalize-into-array', () => ({
-  normalizeIntoArray: (...args) => mockNormalizeIntoArray(...args)
 }))
 
 describe('commsRequestHandler', () => {
@@ -45,12 +41,10 @@ describe('commsRequestHandler', () => {
 
   describe('handler function', () => {
     test('should process single recipient successfully', async () => {
-      mockNormalizeIntoArray.mockReturnValue(['test@example.com'])
       mockPublishCommsRequest.mockResolvedValue(undefined)
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)
 
-      expect(mockNormalizeIntoArray).toHaveBeenCalledWith('test@example.com')
       expect(mockPublishCommsRequest).toHaveBeenCalledTimes(1)
       expect(mockPublishCommsRequest).toHaveBeenCalledWith(mockRequest.payload, 'test@example.com')
       expect(mockH.response).toHaveBeenCalledWith({
@@ -63,12 +57,10 @@ describe('commsRequestHandler', () => {
     test('should process multiple recipients successfully', async () => {
       const recipients = ['test1@example.com', 'test2@example.com', 'test3@example.com']
       mockRequest.payload.recipient = recipients
-      mockNormalizeIntoArray.mockReturnValue(recipients)
       mockPublishCommsRequest.mockResolvedValue(undefined)
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)
 
-      expect(mockNormalizeIntoArray).toHaveBeenCalledWith(recipients)
       expect(mockPublishCommsRequest).toHaveBeenCalledTimes(3)
 
       recipients.forEach((recipient, index) => {
@@ -100,7 +92,7 @@ describe('commsRequestHandler', () => {
     })
 
     test('should handle empty recipients array', async () => {
-      mockNormalizeIntoArray.mockReturnValue([])
+      mockRequest.payload.recipient = []
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)
 
@@ -114,7 +106,6 @@ describe('commsRequestHandler', () => {
 
     test('should log error and return 500 when publishCommsRequest fails', async () => {
       const error = new Error('Failed to publish')
-      mockNormalizeIntoArray.mockReturnValue(['test@example.com'])
       mockPublishCommsRequest.mockRejectedValue(error)
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)
@@ -128,28 +119,9 @@ describe('commsRequestHandler', () => {
       expect(result).toBe(mockResponse)
     })
 
-    test('should log error and return 500 when normalizeIntoArray throws', async () => {
-      const error = new Error('Normalize failed')
-      mockNormalizeIntoArray.mockImplementation(() => {
-        throw error
-      })
-
-      const result = await commsRequestHandler.handler(mockRequest, mockH)
-
-      expect(mockLoggerError).toHaveBeenCalledWith('Error processing message: Normalize failed')
-      expect(mockPublishCommsRequest).not.toHaveBeenCalled()
-      expect(mockH.response).toHaveBeenCalledWith({
-        statusCode: 500,
-        message: 'Failed to process request'
-      })
-      expect(mockCode).toHaveBeenCalledWith(500)
-      expect(result).toBe(mockResponse)
-    })
-
     test('should stop processing remaining recipients if one fails and return 500', async () => {
       const recipients = ['test1@example.com', 'test2@example.com', 'test3@example.com']
       mockRequest.payload.recipient = recipients
-      mockNormalizeIntoArray.mockReturnValue(recipients)
 
       mockPublishCommsRequest
         .mockResolvedValueOnce(undefined)
@@ -170,7 +142,6 @@ describe('commsRequestHandler', () => {
 
     test('should preserve payload immutability', async () => {
       const originalPayload = { ...mockRequest.payload }
-      mockNormalizeIntoArray.mockReturnValue(['new@example.com'])
       mockPublishCommsRequest.mockResolvedValue(undefined)
 
       await commsRequestHandler.handler(mockRequest, mockH)
@@ -182,7 +153,6 @@ describe('commsRequestHandler', () => {
     test('should handle mixed case email addresses', async () => {
       const mixedCaseEmail = 'Test@EXAMPLE.com'
       mockRequest.payload.recipient = mixedCaseEmail
-      mockNormalizeIntoArray.mockReturnValue([mixedCaseEmail])
       mockPublishCommsRequest.mockResolvedValue(undefined)
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)
@@ -199,7 +169,6 @@ describe('commsRequestHandler', () => {
 
     test('should handle error with undefined message property and return 500', async () => {
       const error = { toString: () => 'Custom error' }
-      mockNormalizeIntoArray.mockReturnValue(['test@example.com'])
       mockPublishCommsRequest.mockRejectedValue(error)
 
       const result = await commsRequestHandler.handler(mockRequest, mockH)

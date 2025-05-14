@@ -1,5 +1,5 @@
 import { snsClient } from '../../../messaging/sns/client.js'
-import { publish } from '../../../messaging/sns/publish.js'
+import { publishBatch } from '../../../messaging/sns/publish-batch.js'
 import { config } from '../../../config/index.js'
 import { createLogger } from '../../../logging/logger.js'
 import { buildCommsMessage } from './comms-message.js'
@@ -7,10 +7,12 @@ import { buildCommsMessage } from './comms-message.js'
 const logger = createLogger()
 const commsSnsTopic = config.get('messaging.commsRequest.topicArn')
 
-const publishCommsRequest = async (payload, recipient) => {
-  const commsMessage = buildCommsMessage(payload, recipient)
-  await publish(snsClient, commsSnsTopic, commsMessage)
-  logger.info(`Successfully published comms request with ID: ${commsMessage.id}`)
+const publishCommsRequest = async (payload, recipients) => {
+  const messages = recipients.map(recipient => 
+    buildCommsMessage(payload, recipient)
+  )
+  await publishBatch(snsClient, commsSnsTopic, messages)
+  logger.info(`Successfully published comms requests`)
 }
 
 export {
