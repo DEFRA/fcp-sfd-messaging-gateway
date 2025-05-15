@@ -47,8 +47,6 @@ const getMessages = async (queueUrl) => {
     MaxNumberOfMessages: 10
   })
 
-  console.log(queueUrl)
-
   const { Messages: messages } = await sqsClient.send(command)
 
   return messages
