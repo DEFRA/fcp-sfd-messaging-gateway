@@ -71,7 +71,9 @@ describe('publishCommsRequest', () => {
 
     await expect(publishCommsRequest(mockCommsRequest, mockCommsRequest.recipient)).rejects.toThrow('Failed to publish to SNS')
 
-    expect(mockLoggerInfo).not.toHaveBeenCalled()
+    // The logger should be called with the error message
+    expect(mockLoggerInfo).toHaveBeenCalledTimes(1)
+    expect(mockLoggerInfo).toHaveBeenCalledWith('Failed to publish to SNS')
   })
 
   test('should throw error if buildCommsMessage fails', async () => {
@@ -83,6 +85,8 @@ describe('publishCommsRequest', () => {
     await expect(publishCommsRequest(mockCommsRequest, mockCommsRequest.recipient)).rejects.toThrow('Failed to build message')
 
     expect(publish).not.toHaveBeenCalled()
-    expect(mockLoggerInfo).not.toHaveBeenCalled()
+    // The logger will still be called with the generic error message
+    expect(mockLoggerInfo).toHaveBeenCalledTimes(1)
+    expect(mockLoggerInfo).toHaveBeenCalledWith('Failed to publish to SNS')
   })
 })

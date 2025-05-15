@@ -2,8 +2,7 @@ import {
   GetQueueAttributesCommand,
   PurgeQueueCommand,
   ReceiveMessageCommand,
-  SQSClient,
-  SendMessageCommand
+  SQSClient
 } from '@aws-sdk/client-sqs'
 
 const sqsClient = new SQSClient({
