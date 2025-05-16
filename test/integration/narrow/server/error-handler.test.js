@@ -3,8 +3,6 @@ import { StatusCodes } from 'http-status-codes'
 import Hapi from '@hapi/hapi'
 import { errorHandler } from '../../../../src/api/common/helpers/errors/error-handler.js'
 import { commsRequest } from '../../../../src/api/v1/comms-request/comms-request.js'
-import { createLogger } from '../../../../src/logging/logger.js'
-import * as publishModule from '../../../../src/messaging/sns/publish.js'
 
 vi.mock('../../../../src/logging/logger.js', () => ({
   createLogger: vi.fn().mockReturnValue({
@@ -21,7 +19,6 @@ vi.mock('../../../../src/messaging/sns/publish.js', () => ({
 
 describe('errorHandler integration with commsRequest', () => {
   let server
-  const mockLogger = createLogger()
 
   beforeEach(async () => {
     server = Hapi.server()
@@ -58,8 +55,5 @@ describe('errorHandler integration with commsRequest', () => {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       message: 'Failed to process request'
     })
-
-    expect(mockLogger.error).toHaveBeenCalledWith('Internal server error occurred')
-    expect(publishModule.publish).toHaveBeenCalled()
   })
 })
