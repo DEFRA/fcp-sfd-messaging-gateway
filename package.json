@@ -10,8 +10,8 @@
   "scripts": {
     "pretest": "npm run test:lint",
     "docker:debug": "docker compose -f compose.yaml -f compose.debug.yaml -p 'fcp-sfd-messaging-gateway' up",
-    "docker:test": "docker compose down && docker compose -f compose.yaml -f compose.test.yaml run  --build --rm 'fcp-sfd-messaging-gateway'",
-    "docker:test:watch": "docker compose down && docker compose -f compose.yaml -f compose.test.yaml -f compose.test.watch.yaml run  --build --rm 'fcp-sfd-messaging-gateway'",
+    "docker:test": "docker compose down && docker compose -f compose.yaml -f compose.test.yaml run --build --rm 'fcp-sfd-messaging-gateway'",
+    "docker:test:watch": "docker compose down && docker compose -f compose.yaml -f compose.test.yaml -f compose.test.watch.yaml run --build --rm 'fcp-sfd-messaging-gateway'",
     "test": "rm -rf ./coverage/** && vitest run --coverage",
     "test:watch": "vitest watch",
     "test:lint": "standard",
