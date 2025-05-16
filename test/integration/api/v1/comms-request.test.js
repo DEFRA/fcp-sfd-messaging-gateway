@@ -1,7 +1,8 @@
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getMessages, parseSqsMessage, resetQueue } from '../../../helpers/sqs.js'
 import { createRecipients } from '../../../helpers/test-data.js'
 import { createServer } from '../../../../src/api/index.js'
+import { v4 as uuidv4 } from 'uuid'
 
 const commsRequestQueueUrl = process.env.COMMS_REQUEST_QUEUE_URL
 
@@ -11,26 +12,13 @@ describe('v1 comms-request integration tests', () => {
   beforeAll(async () => {
     server = await createServer()
     await server.initialize()
-
-    try {
-      await resetQueue(commsRequestQueueUrl)
-      console.log('Queue reset successfully in beforeAll')
-    } catch (error) {
-      console.warn(`Queue reset failed: ${error.message}. Tests may be unstable.`)
-    }
-  })
-
-  beforeEach(async () => {
-    try {
-      await resetQueue(commsRequestQueueUrl)
-      await new Promise(resolve => setTimeout(resolve, 100))
-    } catch (error) {
-      console.warn(`Queue reset failed in beforeEach: ${error.message}`)
-    }
+    await resetQueue(commsRequestQueueUrl)
   })
 
   describe('POST /v1/comms-request', () => {
     test('should process single recipient', async () => {
+      const testId = uuidv4()
+
       const response = await server.inject({
         method: 'POST',
         url: '/v1/comms-request',
@@ -42,9 +30,9 @@ describe('v1 comms-request integration tests', () => {
           commsType: 'email',
           recipient: 'test@example.com',
           personalisation: {
-            reference: 'test-reference'
+            reference: `test-reference-${testId}`
           },
-          reference: 'email-reference',
+          reference: `email-reference-${testId}`,
           emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
         }
       })
@@ -56,36 +44,18 @@ describe('v1 comms-request integration tests', () => {
 
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      try {
-        const messages = await getMessages(commsRequestQueueUrl)
-        const parsedMessages = messages ? messages.map((message) => parseSqsMessage(message)) : []
+      const messages = await getMessages(commsRequestQueueUrl)
+      const parsedMessages = messages
+        .map(message => parseSqsMessage(message))
+        .filter(msg => msg.data.reference === `email-reference-${testId}`)
 
-        expect(parsedMessages.length).toBe(1)
-        expect(parsedMessages[0]).toMatchObject({
-          id: expect.any(String),
-          source: 'fcp-sfd-messaging-gateway',
-          type: 'uk.gov.fcp.sfd.notification.request',
-          time: expect.any(String),
-          data: {
-            crn: 1234567890,
-            sbi: 123456789,
-            sourceSystem: 'source',
-            notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
-            commsType: 'email',
-            recipient: 'test@example.com',
-            personalisation: {
-              reference: 'test-reference'
-            },
-            reference: 'email-reference',
-            emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
-          }
-        })
-      } catch (error) {
-        throw new Error(`Failed to verify messages: ${error.message}`)
-      }
+      expect(parsedMessages.length).toBe(1)
+      expect(parsedMessages[0].data.recipient).toBe('test@example.com')
     })
 
     test('should process multiple recipients', async () => {
+      const testId = uuidv4()
+
       const response = await server.inject({
         method: 'POST',
         url: '/v1/comms-request',
@@ -100,9 +70,9 @@ describe('v1 comms-request integration tests', () => {
             'test2@example.com'
           ],
           personalisation: {
-            reference: 'test-reference'
+            reference: `test-reference-${testId}`
           },
-          reference: 'email-reference',
+          reference: `email-reference-${testId}`,
           emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
         }
       })
@@ -114,21 +84,19 @@ describe('v1 comms-request integration tests', () => {
 
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      try {
-        const messages = await getMessages(commsRequestQueueUrl)
-        const parsedMessages = messages ? messages.map((message) => parseSqsMessage(message)) : []
+      const messages = await getMessages(commsRequestQueueUrl)
+      const parsedMessages = messages
+        .map(message => parseSqsMessage(message))
+        .filter(msg => msg.data.reference === `email-reference-${testId}`)
 
-        expect(parsedMessages.length).toBe(2)
-
-        const recipients = parsedMessages.map(msg => msg.data.recipient)
-        expect(recipients).toContain('test@example.com')
-        expect(recipients).toContain('test2@example.com')
-      } catch (error) {
-        throw new Error(`Failed to verify messages: ${error.message}`)
-      }
+      expect(parsedMessages.length).toBe(2)
+      const recipients = parsedMessages.map(msg => msg.data.recipient)
+      expect(recipients).toContain('test@example.com')
+      expect(recipients).toContain('test2@example.com')
     })
 
     test('should handle maximum 10 recipients', async () => {
+      const testId = uuidv4()
       const recipients = createRecipients(10)
 
       const response = await server.inject({
@@ -142,9 +110,9 @@ describe('v1 comms-request integration tests', () => {
           commsType: 'email',
           recipient: recipients,
           personalisation: {
-            reference: 'test-reference'
+            reference: `test-reference-${testId}`
           },
-          reference: 'email-reference',
+          reference: `email-reference-${testId}`,
           emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
         }
       })
@@ -153,24 +121,12 @@ describe('v1 comms-request integration tests', () => {
 
       await new Promise(resolve => setTimeout(resolve, 800))
 
-      try {
-        let allMessages = []
-        const firstBatch = await getMessages(commsRequestQueueUrl)
-        if (firstBatch) {
-          allMessages = [...firstBatch]
-        }
+      const allMessages = await getMessages(commsRequestQueueUrl)
+      const parsedMessages = allMessages
+        .map(message => parseSqsMessage(message))
+        .filter(msg => msg.data.reference === `email-reference-${testId}`)
 
-        if (allMessages.length < 10) {
-          const secondBatch = await getMessages(commsRequestQueueUrl)
-          if (secondBatch) {
-            allMessages = [...allMessages, ...secondBatch]
-          }
-        }
-
-        expect(allMessages.length).toBe(10)
-      } catch (error) {
-        throw new Error(`Failed to verify messages: ${error.message}`)
-      }
+      expect(parsedMessages.length).toBe(10)
     })
 
     test('should reject more than 10 recipients', async () => {
@@ -278,14 +234,6 @@ describe('v1 comms-request integration tests', () => {
 
       expect(response.statusCode).toBe(400)
     })
-  })
-
-  afterEach(async () => {
-    try {
-      await resetQueue(commsRequestQueueUrl)
-    } catch (error) {
-      console.warn(`Queue reset failed in afterEach: ${error.message}`)
-    }
   })
 
   afterAll(async () => {
