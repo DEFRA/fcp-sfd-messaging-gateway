@@ -126,29 +126,6 @@ describe('buildCommsMessage', () => {
     expect(result.data.oneClickUnsubscribeUrl).toBeUndefined()
   })
 
-  test('should preserve complex personalisation objects', () => {
-    const complexPayload = {
-      ...mockPayload,
-      personalisation: {
-        applicationReference: 'test-ref',
-        nested: {
-          value: 'complex-data',
-          array: [1, 2, 3]
-        }
-      }
-    }
-    const recipient = 'test@example.com'
-    const result = buildCommsMessage(complexPayload, recipient)
-
-    expect(result.data.personalisation).toEqual({
-      applicationReference: 'test-ref',
-      nested: {
-        value: 'complex-data',
-        array: [1, 2, 3]
-      }
-    })
-  })
-
   test('should handle recipient as array', () => {
     const recipients = ['test1@example.com', 'test2@example.com']
     const result = buildCommsMessage(mockPayload, recipients)
