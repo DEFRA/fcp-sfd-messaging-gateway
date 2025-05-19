@@ -1,6 +1,5 @@
 import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest'
 import { createServer } from '../../../../../src/api/index.js'
-import { v4 as uuidv4 } from 'uuid'
 import { createRecipients } from '../../../../helpers/test-data.js'
 
 vi.mock('../../../../../src/messaging/outbound/comms-request/publish-request.js')
@@ -25,7 +24,7 @@ describe('v1 comms-request narrow integration tests', () => {
     })
 
     test('should handle maximum 10 recipients', async () => {
-      const testId = uuidv4()
+      const testId = crypto.randomUUID()
       const recipients = createRecipients(10)
 
       const response = await server.inject({

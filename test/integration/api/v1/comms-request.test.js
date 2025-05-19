@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getMessages, parseSqsMessage, resetQueue } from '../../../helpers/sqs.js'
 import { createServer } from '../../../../src/api/index.js'
-import { v4 as uuidv4 } from 'uuid'
 
 const commsRequestQueueUrl = process.env.COMMS_REQUEST_QUEUE_URL
 
@@ -16,7 +15,7 @@ describe('v1 comms-request integration tests', () => {
 
   describe('POST /v1/comms-request', () => {
     test('should publish single recipient to SNS', async () => {
-      const testId = uuidv4()
+      const testId = crypto.randomUUID()
 
       const response = await server.inject({
         method: 'POST',
@@ -53,7 +52,7 @@ describe('v1 comms-request integration tests', () => {
     })
 
     test('should publish array of recipient to SNS', async () => {
-      const testId = uuidv4()
+      const testId = crypto.randomUUID()
 
       const response = await server.inject({
         method: 'POST',
