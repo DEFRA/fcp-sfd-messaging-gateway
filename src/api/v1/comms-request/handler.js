@@ -1,11 +1,11 @@
 import { publishCommsRequest } from '../../../messaging/outbound/comms-request/publish-request.js'
-import { normalizeIntoArray } from '../../../utils/normalize-into-array.js'
+import { normaliseIntoArray } from '../../../utils/normalise-into-array.js'
 import { StatusCodes } from 'http-status-codes'
 
 const commsRequestHandler = {
   handler: async (request, h) => {
     const payload = request.payload
-    const recipients = normalizeIntoArray(payload.recipient)
+    const recipients = normaliseIntoArray(payload.recipient)
 
     for (const recipient of recipients) {
       await publishCommsRequest(payload, recipient)

@@ -1,8 +1,9 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest'
+
 import { StatusCodes } from 'http-status-codes'
-import Hapi from '@hapi/hapi'
-import { errorHandler } from '../../../../src/api/common/helpers/errors/error-handler.js'
-import { commsRequest } from '../../../../src/api/v1/comms-request/comms-request.js'
+
+import { startServer } from '../../../../src/api/common/helpers/start-server.js'
+import { publishCommsRequest } from '../../../../src/messaging/outbound/comms-request/publish-request.js'
 
 vi.mock('../../../../src/logging/logger.js', () => ({
   createLogger: vi.fn().mockReturnValue({
@@ -11,19 +12,13 @@ vi.mock('../../../../src/logging/logger.js', () => ({
   })
 }))
 
-vi.mock('../../../../src/messaging/sns/publish.js', () => ({
-  publish: vi.fn().mockImplementation(() => {
-    throw new Error('SNS Publishing Error')
-  })
-}))
+vi.mock('../../../../src/messaging/outbound/comms-request/publish-request.js')
 
 describe('errorHandler integration with commsRequest', () => {
   let server
 
   beforeEach(async () => {
-    server = Hapi.server()
-    server.route(commsRequest)
-    await server.register(errorHandler)
+    server = await startServer()
     vi.clearAllMocks()
   })
 
@@ -32,6 +27,8 @@ describe('errorHandler integration with commsRequest', () => {
   })
 
   test('should handle 500 error from SNS publish failure', async () => {
+    publishCommsRequest.mockRejectedValue(new Error('Failed to process request'))
+
     const response = await server.inject({
       method: 'POST',
       url: '/v1/comms-request',
