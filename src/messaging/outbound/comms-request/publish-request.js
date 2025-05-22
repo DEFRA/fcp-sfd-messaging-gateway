@@ -13,7 +13,7 @@ const publishCommsRequest = async (payload, recipient) => {
     await publish(snsClient, commsSnsTopic, commsMessage)
     logger.info(`Successfully published comms request with ID: ${commsMessage.id}`)
   } catch (error) {
-    logger.info('Failed to publish to SNS')
+    logger.error(error, 'Failed to publish to SNS')
     throw error
   }
 }
