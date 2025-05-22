@@ -12,7 +12,7 @@ describe('v1 comms-request narrow integration tests', () => {
     return server
   }
 
-  describe('POST /v1/comms-request', () => {
+  describe('POST /api/v1/comms-request', () => {
     let server
 
     beforeEach(async () => {
@@ -29,7 +29,7 @@ describe('v1 comms-request narrow integration tests', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,
@@ -53,7 +53,7 @@ describe('v1 comms-request narrow integration tests', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,
@@ -72,15 +72,19 @@ describe('v1 comms-request narrow integration tests', () => {
       expect(response.statusCode).toBe(400)
       expect(response.result).toEqual({
         statusCode: 400,
-        message: 'Invalid request payload',
-        details: '"recipient" must contain at most 10 items'
+        error: 'Bad Request',
+        message: '"recipient" must contain at most 10 items',
+        validation: {
+          keys: ['recipient'],
+          source: 'payload'
+        }
       })
     })
 
     test('should handle missing required fields', async () => {
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           commsType: 'email',
           recipient: 'test@example.com'
@@ -93,7 +97,7 @@ describe('v1 comms-request narrow integration tests', () => {
     test('should handle invalid payload structure', async () => {
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: 'invalid-json'
       })
 
@@ -103,7 +107,7 @@ describe('v1 comms-request narrow integration tests', () => {
     test('should handle empty payload', async () => {
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {}
       })
 
@@ -113,7 +117,7 @@ describe('v1 comms-request narrow integration tests', () => {
     test('should handle empty recipient array', async () => {
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,
@@ -135,7 +139,7 @@ describe('v1 comms-request narrow integration tests', () => {
     test('should handle invalid email format', async () => {
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,

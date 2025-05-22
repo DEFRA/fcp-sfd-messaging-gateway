@@ -31,7 +31,7 @@ describe('errorHandler integration with commsRequest', () => {
 
     const response = await server.inject({
       method: 'POST',
-      url: '/v1/comms-request',
+      url: '/api/v1/comms-request',
       payload: {
         crn: 1234567890,
         sbi: 123456789,
@@ -50,7 +50,8 @@ describe('errorHandler integration with commsRequest', () => {
     expect(response.statusCode).toBe(StatusCodes.INTERNAL_SERVER_ERROR)
     expect(JSON.parse(response.payload)).toEqual({
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      message: 'Failed to process request'
+      message: 'Failed to process request',
+      error: 'Internal Server Error'
     })
   })
 })

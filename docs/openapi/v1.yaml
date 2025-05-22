@@ -1,0 +1,178 @@
+info:
+  title: FCP SFD Data API
+  version: 0.0.1
+  description: API for FCP Single Front Door Data service
+  contact:
+    name: SFD Devs
+    url: https://github.com/orgs/DEFRA/teams/fcp-sfd-devs
+servers:
+  - url: http://localhost:3003
+    description: local server
+  - url: https://fcp-sfd-messaging-gateway.dev.cdp-int.defra.cloud
+    description: CDP Dev environment
+  - url: https://fcp-sfd-messaging-gateway.cdp-int.defra.cloud
+    description: CDP Test environment
+tags:
+  - name: /health
+    description: Health check endpoint
+openapi: 3.0.0
+components:
+  schemas:
+    commsType:
+      type: string
+      enum:
+        - email
+    personalisation:
+      type: object
+    body:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          x-format:
+            guid: true
+        crn:
+          type: number
+          minimum: 1050000000
+          maximum: 9999999999
+        sbi:
+          type: number
+          minimum: 105000000
+          maximum: 999999999
+        sourceSystem:
+          type: string
+          pattern: ^[a-z0-9-_]+$
+        notifyTemplateId:
+          type: string
+          x-format:
+            guid: true
+        commsType:
+          $ref: '#/components/schemas/commsType'
+        recipient:
+          anyOf:
+            - type: string
+              x-format:
+                email: true
+            - $ref: '#/x-alt-definitions/recipient'
+        personalisation:
+          $ref: '#/components/schemas/personalisation'
+        reference:
+          type: string
+        oneClickUnsubscribeUrl:
+          type: string
+          x-format:
+            uri: true
+        emailReplyToId:
+          type: string
+          x-format:
+            guid: true
+      required:
+        - sbi
+        - sourceSystem
+        - notifyTemplateId
+        - commsType
+        - recipient
+        - personalisation
+        - reference
+        - emailReplyToId
+    message:
+      type: string
+      enum:
+        - Communication request accepted
+    CommsRequestSuccess:
+      type: object
+      properties:
+        message:
+          $ref: '#/components/schemas/message'
+    keys:
+      type: array
+      items:
+        type: string
+    validation:
+      type: object
+      properties:
+        source:
+          type: string
+        keys:
+          $ref: '#/components/schemas/keys'
+    BadRequest:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          enum:
+            - 400
+        error:
+          type: string
+        message:
+          type: string
+        validation:
+          $ref: '#/components/schemas/validation'
+    NotFound:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          enum:
+            - 404
+        error:
+          type: string
+        message:
+          type: string
+    InternalServerError:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          enum:
+            - 500
+        error:
+          type: string
+        message:
+          type: string
+paths:
+  /api/v1/comms-request:
+    post:
+      summary: Submit a communication request
+      operationId: postApiV1Commsrequest
+      tags:
+        - /comms-request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body'
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommsRequestSuccess'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+x-alt-definitions:
+  recipient:
+    type: array
+    minItems: 1
+    maxItems: 10
+    items:
+      type: string
+      x-format:
+        email: true

@@ -19,7 +19,7 @@ describe('v1 comms-request integration tests', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,
@@ -56,7 +56,7 @@ describe('v1 comms-request integration tests', () => {
 
       const response = await server.inject({
         method: 'POST',
-        url: '/v1/comms-request',
+        url: '/api/v1/comms-request',
         payload: {
           crn: 1234567890,
           sbi: 123456789,

@@ -14,6 +14,7 @@ export const errorHandler = {
 
         return h.response({
           statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          error: 'Internal Server Error',
           message: 'Failed to process request'
         }).code(StatusCodes.INTERNAL_SERVER_ERROR)
       }
