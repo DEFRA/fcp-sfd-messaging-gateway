@@ -1,5 +1,8 @@
 import path from 'path'
 import hapi from '@hapi/hapi'
+import Inert from '@hapi/inert'
+import Vision from '@hapi/vision'
+import hapiSwagger from 'hapi-swagger'
 
 import { config } from '../config/index.js'
 import { router } from './router.js'
@@ -8,6 +11,7 @@ import { secureContext } from './common/helpers/secure-context/index.js'
 import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
+import { hapiSwaggerOptions } from '../config/hapi-swagger-options.js'
 
 const createServer = async () => {
   setupProxy()
@@ -44,7 +48,13 @@ const createServer = async () => {
     requestTracing,
     secureContext,
     pulse,
-    router
+    router,
+    Inert,
+    Vision,
+    {
+      plugin: hapiSwagger,
+      options: hapiSwaggerOptions
+    }
   ])
 
   return server
