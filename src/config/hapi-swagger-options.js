@@ -1,7 +1,7 @@
 const hapiSwaggerOptions = {
   info: {
     title: 'FCP SFD Messaging Gateway API',
-    version: '0.0.1',
+    version: '1.0.0',
     description: 'API for FCP Single Front Door Messaging Gateway service',
     contact: {
       name: 'SFD Devs',
