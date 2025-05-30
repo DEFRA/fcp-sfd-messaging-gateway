@@ -87,7 +87,7 @@ export const serverConfig = {
   mongoUri: {
     doc: 'URI for mongodb',
     format: String,
-    default: 'mongodb://127.0.0.1:27317/',
+    default: 'mongodb://127.0.0.1:27017/',
     env: 'MONGO_URI'
   },
   mongoDatabase: {
