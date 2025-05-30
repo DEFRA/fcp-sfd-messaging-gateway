@@ -1,7 +1,7 @@
 info:
-  title: FCP SFD Data API
+  title: FCP SFD Messaging Gateway API
   version: 0.0.1
-  description: API for FCP Single Front Door Data service
+  description: API for FCP Single Front Door Messaging Gateway service
   contact:
     name: SFD Devs
     url: https://github.com/orgs/DEFRA/teams/fcp-sfd-devs

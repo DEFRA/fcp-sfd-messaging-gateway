@@ -12,7 +12,7 @@ services:
       PORT: 3003
       NODE_ENV: development
       LOCALSTACK_ENDPOINT: http://localstack:4566
-      MONGO_URI: mongodb://mongodb:27017/
+      MONGO_URI: mongodb://mongodb:27317/
       COMMS_GATEWAY_TOPIC_ARN: arn:aws:sns:eu-west-2:000000000000:fcp_sfd_comms_gateway
       COMMS_REQUEST_QUEUE_URL: http://localstack:4566/000000000000/fcp_sfd_comms_request
       SQS_ENDPOINT: http://localstack:4566
